@@ -29,15 +29,15 @@ func main() {
   r := gin.Default()
   var DefaultWriter io.Writer = os.Stdout
   // use gin-error-handler middleware
-	r.Use(ginerror.ErrorHandle(DefaultWriter))
-	r.GET("/ping", func(c *gin.Context) {
+  r.Use(ginerror.ErrorHandle(DefaultWriter))
+  r.GET("/ping", func(c *gin.Context) {
     if "An error occurred" {
-      panic(lib.GenError(http.StatusInternalServerError,myErrors.ERROR))
+  	panic(ginerror.GenError(http.StatusInternalServerError,myErrors.ERROR))
     }
     c.JSON(200, gin.H{
-			"message": "ok",
-		})
-	})
-	r.Run()
+       "message": "ok",
+      })
+  })
+  r.Run()
 }
 ```
