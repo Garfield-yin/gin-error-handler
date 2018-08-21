@@ -1,0 +1,4 @@
+package: github.com/garfield-yin/gin-error-handler
+import:
+- package: github.com/gin-gonic/gin
+  version: master
