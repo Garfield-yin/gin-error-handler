@@ -28,11 +28,29 @@ import (
 func main() {
   r := gin.Default()
   var DefaultWriter io.Writer = os.Stdout
+  /**
+   Register your error message flags,like this
+   var MsgFlags = map[int]string{
+    SUCCESS:        "ok",
+    ERROR:          "fail",
+    INVALID_PARAMS: "Bad request params",
+  }
+  */
+  //ginerror.RegisterErrors(yourErrors.MsgFlags)
   // use gin-error-handler middleware
   r.Use(ginerror.ErrorHandle(DefaultWriter))
   r.GET("/ping", func(c *gin.Context) {
     if "An error occurred" {
-  	panic(ginerror.GenError(http.StatusInternalServerError,myErrors.ERROR))
+      /*
+        You can implement this GenError yourself.
+        but the error structure must be like this:
+        type Error struct {
+          StatusCode int
+          Msg        string
+          Code       int
+        }
+      */
+  	  panic(ginerror.GenError(http.StatusInternalServerError,myErrors.ERROR))
     }
     c.JSON(200, gin.H{
        "message": "ok",

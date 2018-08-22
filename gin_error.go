@@ -23,15 +23,23 @@ func (err *Error) Error() string {
 	return fmt.Sprintf("status_code:%d, msg:%s", err.StatusCode, err.Msg)
 }
 
-// GenError error build
+// RegisterErrors : register your error messages
+func RegisterErrors(msgFlags map[int]string) {
+	for key, value := range msgFlags {
+		ginErrors.MsgFlags[key] = value
+	}
+}
+
+// GenError error build, You can implement this function yourself.
 func GenError(httpCode int, errCode int, msg ...string) Error {
 	err := Error{
 		StatusCode: httpCode,
 		Code:       errCode,
-		Msg:        ginErrors.GetMsg(errCode),
 	}
-	if len(msg) > 0 {
+	if len(msg) > 0 { // your message stri
 		err.Msg = msg[0]
+	} else {
+		err.Msg = ginErrors.GetMsg(errCode)
 	}
 	return err
 }
@@ -62,7 +70,7 @@ func ErrorHandle(out io.Writer) gin.HandlerFunc {
 				httprequest, _ := httputil.DumpRequest(ctx.Request, false)
 				logger.Printf("[Recovery] panic recovered:\n%s\n%s\n%s", string(httprequest), err, stack)
 				// default error
-				internalServerError := GenError(http.StatusInternalServerError, feiErrors.ERROR)
+				internalServerError := GenError(http.StatusInternalServerError, ginErrors.ERROR)
 				abortWithError(ctx, internalServerError)
 			}
 		}()
