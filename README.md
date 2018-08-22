@@ -36,7 +36,7 @@ func main() {
     INVALID_PARAMS: "Bad request params",
   }
   */
-  //ginerror.RegisterErrors(yourErrors.MsgFlags)
+  ginerror.RegisterErrors(yourErrors.MsgFlags)
   // use gin-error-handler middleware
   r.Use(ginerror.ErrorHandle(DefaultWriter))
   r.GET("/ping", func(c *gin.Context) {
