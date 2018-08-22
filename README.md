@@ -27,7 +27,7 @@ import (
 
 func main() {
   r := gin.Default()
-  var DefaultWriter io.Writer = os.Stdout
+  var errWriter io.Writer = os.Stderr
   /**
    Register your error message flags,like this
    var MsgFlags = map[int]string{
@@ -36,9 +36,9 @@ func main() {
     INVALID_PARAMS: "Bad request params",
   }
   */
-  //ginerror.RegisterErrors(yourErrors.MsgFlags)
+  ginerror.RegisterErrors(yourErrors.MsgFlags)
   // use gin-error-handler middleware
-  r.Use(ginerror.ErrorHandle(DefaultWriter))
+  r.Use(ginerror.ErrorHandle(errWriter))
   r.GET("/ping", func(c *gin.Context) {
     if "An error occurred" {
       /*

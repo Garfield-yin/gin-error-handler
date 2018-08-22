@@ -54,7 +54,7 @@ func abortWithError(c *gin.Context, err Error) {
 
 // ErrorHandle 统一捕获错误
 func ErrorHandle(out io.Writer) gin.HandlerFunc {
-	logger := log.New(out, "\n\n\x1b[31m", log.LstdFlags)
+	logger := log.New(out, "", log.LstdFlags|log.Llongfile)
 	return func(ctx *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
@@ -68,7 +68,7 @@ func ErrorHandle(out io.Writer) gin.HandlerFunc {
 				stack := make([]byte, 1024*8)
 				stack = stack[:runtime.Stack(stack, false)]
 				httprequest, _ := httputil.DumpRequest(ctx.Request, false)
-				logger.Printf("[Recovery] panic recovered:\n%s\n%s\n%s", string(httprequest), err, stack)
+				logger.Printf("[Handler] panic recovered:\n%s\n%s\n%s", string(httprequest), err, stack)
 				// default error
 				internalServerError := GenError(http.StatusInternalServerError, ginErrors.ERROR)
 				abortWithError(ctx, internalServerError)
