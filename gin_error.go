@@ -52,6 +52,19 @@ func abortWithError(c *gin.Context, err Error) {
 	c.Abort()
 }
 
+// Stack returns a formatted stack trace of the goroutine that calls it.
+// It calls runtime.Stack with a large enough buffer to capture the entire trace.
+func Stack() []byte {
+	buf := make([]byte, 1024)
+	for {
+		n := runtime.Stack(buf, false)
+		if n < len(buf) {
+			return buf[:n]
+		}
+		buf = make([]byte, 2*len(buf))
+	}
+}
+
 // ErrorHandle 统一捕获错误
 func ErrorHandle(out io.Writer) gin.HandlerFunc {
 	logger := log.New(out, "", log.LstdFlags|log.Llongfile)
@@ -68,7 +81,7 @@ func ErrorHandle(out io.Writer) gin.HandlerFunc {
 				stack := make([]byte, 1024*8)
 				stack = stack[:runtime.Stack(stack, false)]
 				httprequest, _ := httputil.DumpRequest(ctx.Request, false)
-				logger.Printf("[Handler] panic recovered:\n%s\n%s\n%s", string(httprequest), err, stack)
+				logger.Printf("[Handler] panic recovered:\n%s\n%s\n%s", string(httprequest), err, Stack())
 				// default error
 				internalServerError := GenError(http.StatusInternalServerError, ginErrors.ERROR)
 				abortWithError(ctx, internalServerError)
