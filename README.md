@@ -49,8 +49,10 @@ func main() {
           Msg        string
           Code       int
         }
+        
       */
   	  panic(ginerror.GenError(http.StatusInternalServerError,myErrors.ERROR))
+      // panic(ginerror.GenError(http.StatusInternalServerError,0,"you error message."))
     }
     c.JSON(200, gin.H{
        "message": "ok",
